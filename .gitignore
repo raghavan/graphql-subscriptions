@@ -1,0 +1,11 @@
+# Ignore node_modules
+client/node_modules/
+server/node_modules/
+
+# Optional: lock files if using a specific package manager
+# If you're using npm, keep package-lock.json
+# If you're using yarn, add:
+yarn.lock
+
+# Ignore environment files (if any)
+.env
