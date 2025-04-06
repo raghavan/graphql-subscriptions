@@ -8,19 +8,27 @@ const INCREMENT_COUNTER = gql`
   }
 `;
 
-const CountButton = () => {
-  const [incrementCounter, { data, loading, error }] = useMutation(INCREMENT_COUNTER);
+const INCREMENT_NEW_COUNTER = gql`
+  mutation {
+    incrementNewCounter
+  }
+`;
 
-  const handleClick = () => {
-    incrementCounter();
-  };
+const CountButton = () => {
+  const [incrementCounter, { data: oldData, loading: oldLoading, error: oldError }] = useMutation(INCREMENT_COUNTER);
+  const [incrementNewCounter, { data: newData, loading: newLoading, error: newError }] = useMutation(INCREMENT_NEW_COUNTER);
 
   return (
     <div>
-      <button onClick={handleClick}>Increment Counter</button>
-      {loading && <p>Incrementing...</p>}
-      {error && <p>Error occurred</p>}
-      {data && <p>New Counter: {data.incrementCounter}</p>}
+      <button onClick={() => incrementCounter()}>Old Increment Counter</button>
+      {oldLoading && <p>Incrementing Old...</p>}
+      {oldError && <p>Error occurred in Old increment</p>}
+      {oldData && <p>Old Counter: {oldData.incrementCounter}</p>}
+
+      <button onClick={() => incrementNewCounter()}>New Increment Counter</button>
+      {newLoading && <p>Incrementing New...</p>}
+      {newError && <p>Error occurred in New increment</p>}
+      {newData && <p>New Counter: {newData.incrementNewCounter}</p>}
     </div>
   );
 };

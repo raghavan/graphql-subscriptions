@@ -8,36 +8,44 @@ const COUNTER_SUBSCRIPTION = gql`
   }
 `;
 
-const ViewCounter = () => {
-  const [counter, setCounter] = useState(null);
+const NEW_COUNTER_SUBSCRIPTION = gql`
+  subscription {
+    newCounterUpdated
+  }
+`;
 
-  // Add an onError callback to log errors and inspect the data flow.
-  const { data, loading, error } = useSubscription(COUNTER_SUBSCRIPTION, {
-    onError: (err) => {
-      console.error('Subscription error (onError callback):', err);
-    },
+const ViewCounter = () => {
+  const [oldCounter, setOldCounter] = useState(null);
+  const [newCounter, setNewCounter] = useState(null);
+
+  const { data: oldData, loading: oldLoading, error: oldError } = useSubscription(COUNTER_SUBSCRIPTION, {
+    onError: (err) => console.error('Old subscription error:', err),
+  });
+
+  const { data: newData, loading: newLoading, error: newError } = useSubscription(NEW_COUNTER_SUBSCRIPTION, {
+    onError: (err) => console.error('New subscription error:', err),
   });
 
   useEffect(() => {
-    if (error) {
-      console.error('Subscription hook error:', error);
+    if (oldError) console.error('Error in old subscription:', oldError);
+    if (oldData && oldData.counterUpdated !== undefined) {
+      setOldCounter(oldData.counterUpdated);
     }
-    if (data) {
-      console.log('Received subscription data:', data);
-      if (data.counterUpdated !== undefined) {
-        setCounter(data.counterUpdated);
-      } else {
-        console.warn('Subscription data does not contain counterUpdated field:', data);
-      }
-    }
-  }, [data, error]);
+  }, [oldData, oldError]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error in subscription: {error.message}</p>;
+  useEffect(() => {
+    if (newError) console.error('Error in new subscription:', newError);
+    if (newData && newData.newCounterUpdated !== undefined) {
+      setNewCounter(newData.newCounterUpdated);
+    }
+  }, [newData, newError]);
+
+  if (oldLoading || newLoading) return <p>Loading...</p>;
 
   return (
     <div>
-      <h1>Counter: {counter}</h1>
+      <h1>Old Counter: {oldCounter}</h1>
+      <h1>New Counter: {newCounter}</h1>
     </div>
   );
 };
