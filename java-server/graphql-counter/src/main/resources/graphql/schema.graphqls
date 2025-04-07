@@ -1,0 +1,14 @@
+type Query {
+  counter: Int!
+  newCounter: Int!
+}
+
+type Mutation {
+  incrementCounter: Int!
+  incrementNewCounter: Int!
+}
+
+type Subscription {
+  counterUpdated: Int!
+  newCounterUpdated: Int!
+}
